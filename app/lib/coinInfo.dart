@@ -3,10 +3,15 @@ import 'package:app/coin.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'dart:async';
 import 'dart:math' as math;
+import 'coin.dart';
+import 'coinCard.dart';
+import 'coinInfo.dart';
 
 class CoinInfo extends StatefulWidget {
+  final Coin;
+
   // ignore: non_constant_identifier_names
-  const CoinInfo({Key? key, required Coin Coin}) : super(key: key);
+  const CoinInfo({Key? key, @required this.Coin}) : super(key: key);
 
   @override
   State<CoinInfo> createState() => _CoinInfoState();
@@ -69,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return SafeArea(
         child: Scaffold(
             body: SfCartesianChart(
+              title: ChartTitle(text: coinList[0].name),
                 series: <LineSeries<LiveData, int>>[
                   LineSeries<LiveData, int>(
                     onRendererCreated: (ChartSeriesController controller) {
