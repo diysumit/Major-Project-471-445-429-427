@@ -4,7 +4,7 @@ import pandas as pd
 import sys
 import os
 
-from min_hrs_TS import minute_to_hour
+# from min_hrs_TS import minute_to_hour
 from datetime import datetime
 from glob import glob
 from multiprocessing import Pool
