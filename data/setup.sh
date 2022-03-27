@@ -9,7 +9,17 @@ sudo bash ./puppet_install.sh
 # running manifest
 puppet apply -v manifest.pp
 
+# creating virtual environment and activating
+if [ -d "./venv" ]; then
+    source venv/bin/activate
+else
+    virtualenv venv
+    source venv/bin/activate
+fi
+
 # installing python dependencies
+pip install -U pandas
+pip install -U matplotlib
 pip freeze > requirements.txt
 pip install -r requirements.txt
 
@@ -50,5 +60,8 @@ $(mkdir -p processed_data)
 
 echo $spacer
 
-# process_data.py
+# keep this at second last position
+deactivate
+
+# finally run process_data.py
 ./process_data.py update

@@ -1,5 +1,5 @@
 # Class: data_download
-#
+# packages for downloading data
 #
 class data_download {
   # resources
@@ -17,8 +17,8 @@ class data_download {
   }
 }
 
-#Clss: python
-#
+# Class: python
+# for installing python on system
 #
 class python {
   package {'python3':
@@ -29,5 +29,31 @@ class python {
   }
   service {'python3':
     ensure => running
+  }
+}
+
+# Class: virtualenv
+# for creating virtualenv
+#
+class virtualenv {
+  # resources
+  package {'virtualenv':
+    ensure => installed;
+  }
+  service {'virtualenv':
+    ensure => running;
+  }
+}
+
+# Class: flutter_app
+# all dependencies for flutter app
+#
+class flutter_app {
+  # resources
+  package {'dart':
+    ensure => installed;
+  }
+  package{'flutter':
+    ensure => installed;
   }
 }
