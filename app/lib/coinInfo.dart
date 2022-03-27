@@ -71,10 +71,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
         child: Scaffold(
             body: SfCartesianChart(
-              title: ChartTitle(text: coinList[0].name),
+              title: ChartTitle(text: coinList[0].name,
+                    borderWidth: 2,
+                    textStyle: TextStyle(
+                    fontSize: 20,
+                )
+              ),
                 series: <LineSeries<LiveData, int>>[
                   LineSeries<LiveData, int>(
                     onRendererCreated: (ChartSeriesController controller) {
@@ -90,11 +96,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     majorGridLines: const MajorGridLines(width: 0),
                     edgeLabelPlacement: EdgeLabelPlacement.shift,
                     interval: 3,
-                    title: AxisTitle(text: 'Time (seconds)')),
+                    title: AxisTitle(text: 'Months')),
                 primaryYAxis: NumericAxis(
                     axisLine: const AxisLine(width: 0),
                     majorTickLines: const MajorTickLines(size: 0),
-                    title: AxisTitle(text: 'Internet speed (Mbps)')))));
+                    title: AxisTitle(text: 'Market Price')))));
   }
 
   int time = 19;
