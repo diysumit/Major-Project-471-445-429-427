@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     chartData = getChartData();
-    // Timer.periodic(const Duration(seconds: 1), updateDataSource);
+    Timer.periodic(const Duration(seconds: 1), updateDataSource);
     super.initState();
   }
 
