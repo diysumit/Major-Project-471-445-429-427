@@ -45,7 +45,7 @@ class Preprocess:
         """
         
         if len(time_steps) == 0 or len(rate_close) == 0:
-            raise Exception('Empty lists, no data usefull data returned.')
+            raise Exception('Empty lists, no useful data returned.')
 
         with open(filepath, 'a+') as csvfile:
             writer = csv.writer(csvfile)

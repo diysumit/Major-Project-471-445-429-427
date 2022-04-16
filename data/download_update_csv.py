@@ -24,6 +24,10 @@ coins = {'btcusd': ['BTC/USD', './unprocessed_data/btcusd.csv'], 'ethusd': ['ETH
 
 key = 'FAA10B2B-C744-43C1-90BC-D1D0A0007E4C'
 # key = '3E0B48CC-DCD8-4A5C-B336-8DCD7F024521'
+# key = '277A3033-99A9-47AE-AC2F-6C9E557F47B0'
+# key = 'CD276776-814F-4E42-A603-1A97E774AB36'
+# key = '133B3720-92C1-49FA-8B14-E6CFBB53EC7F'
+
 headers = {'X-CoinAPI-Key' : key}
 
 
@@ -66,7 +70,7 @@ def main() -> None:
                 else:
                     download_csv(coin=coin, start=date_today, end=start_date)
 
-    except Exception as e:
+    except Exception:
         print(traceback.format_exc())
 
 if __name__ == "__main__":
