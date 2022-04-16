@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
           return InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => CoinInfo(Coin: coinList[index])));
+                  builder: (context) => CoinInfo(Coin: coinList[index].name)));
             },
             child: CoinCard(
               name: coinList[index].name,
