@@ -8,6 +8,7 @@ Download or Update data
 
 import os
 import sys
+import traceback
 
 from datetime import date, timedelta
 from preprocess import Preprocess
@@ -66,7 +67,7 @@ def main() -> None:
                     download_csv(coin=coin, start=date_today, end=start_date)
 
     except Exception as e:
-        print(e)
+        print(traceback.format_exc())
 
 if __name__ == "__main__":
     sys.exit(main())

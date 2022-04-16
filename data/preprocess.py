@@ -44,9 +44,8 @@ class Preprocess:
                 writes time_steps and rate_low to a csv file
         """
         
-        if len(time_steps) == 0 or len(rate_close) == 0 or not os.path.exits(filepath):
-            time_steps.append('time')
-            rate_close.append('close')
+        if len(time_steps) == 0 or len(rate_close) == 0:
+            raise Exception('Empty lists, no data usefull data returned.')
 
         with open(filepath, 'a+') as csvfile:
             writer = csv.writer(csvfile)
