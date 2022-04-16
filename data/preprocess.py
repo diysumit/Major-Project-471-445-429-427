@@ -89,6 +89,6 @@ class Preprocess:
                 returns last date when coin.csv file was updated
         """
         time_steps_coin, _ = self.read_csv(filepath)
-        last_date_coin = datetime.fromtimestamp(time_steps_coin[-1])
-
-        return last_date_coin
+        last_date_coin = str(datetime.fromtimestamp(time_steps_coin[-1]))
+        
+        return last_date_coin.split(' ')[0]
