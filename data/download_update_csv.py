@@ -62,13 +62,13 @@ def main() -> None:
         if not os.path.exists(filepath):
             print(f'Creating folder {filepath}')
             os.mkdir(filepath)
-        else:
-            for coin in coins.values():
-                if os.path.exists(coin[1]):
-                    last_date = preprocess.get_last_date(coin[1])
-                    update_csv(coin=coin, start=date_today, end=last_date)
-                else:
-                    download_csv(coin=coin, start=date_today, end=start_date)
+        
+        for coin in coins.values():
+            if os.path.exists(coin[1]):
+                last_date = preprocess.get_last_date(coin[1])
+                update_csv(coin=coin, start=date_today, end=last_date)
+            else:
+                download_csv(coin=coin, start=date_today, end=start_date)
 
     except Exception:
         print(traceback.format_exc())
