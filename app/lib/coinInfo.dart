@@ -37,7 +37,6 @@ class MyHomePage extends StatefulWidget {
   MyHomePage(this.coin);
 
 
-  // final String title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
