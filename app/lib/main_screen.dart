@@ -40,6 +40,7 @@ class _MainScreenState extends State<MainScreen> {
           coinList;
         });
       }
+      // print(coinList[0].price);
       return coinList;
     } else {
       throw Exception('Failed to load coins');
@@ -49,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     fetchCoin();
-    Timer.periodic(const Duration(seconds: 10), (timer) => fetchCoin());
+    Timer.periodic(const Duration(seconds: 4), (timer) => fetchCoin());
     super.initState();
   }
 

@@ -22,7 +22,7 @@ filepath = './unprocessed_data/'
 
 coins = {'btcusd': ['BTC/USD', './unprocessed_data/btcusd.csv'], 'ethusd': ['ETH/USD', './unprocessed_data/ethusd.csv']}
 
-key = 'FAA10B2B-C744-43C1-90BC-D1D0A0007E4C'
+key = '277A3033-99A9-47AE-AC2F-6C9E557F47B0'
 # key = '3E0B48CC-DCD8-4A5C-B336-8DCD7F024521'
 # key = '277A3033-99A9-47AE-AC2F-6C9E557F47B0'
 # key = 'CD276776-814F-4E42-A603-1A97E774AB36'

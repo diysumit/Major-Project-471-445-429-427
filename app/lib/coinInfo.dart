@@ -54,8 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     chartData = getChartData();
     chartDataTwo = getChartData();
-    Timer.periodic(const Duration(seconds: 1), updateDataSource);
-    Timer.periodic(const Duration(seconds: 1), updateDataSourceTwo);
+    // Timer.periodic(const Duration(seconds: 1), updateDataSource);
+    // Timer.periodic(const Duration(seconds: 1), updateDataSourceTwo);
     super.initState();
   }
 
@@ -65,74 +65,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return SafeArea(
         child: Scaffold(
-            body: Column(
-              children: <Widget>[
-                SfCartesianChart(
-                    title: ChartTitle(text: widget.coin,
-                        borderWidth: 2,
-                        textStyle: TextStyle(
-                          fontSize: 20,
-                        )
-                    ),
-                    series: <LineSeries<LiveData, int>>[
-                      LineSeries<LiveData, int>(
-                        onRendererCreated: (ChartSeriesController controller) {
-                          _chartSeriesControllerTwo = controller;
-                        },
-                        dataSource: chartDataTwo,
-                        color: const Color.fromRGBO(192, 108, 132, 1),
-                        xValueMapper: (LiveData sales, _) => sales.time,
-                        yValueMapper: (LiveData sales, _) => sales.speed,
-                      )
-                    ],
-                    primaryXAxis: NumericAxis(
-                        majorGridLines: const MajorGridLines(width: 0),
-                        edgeLabelPlacement: EdgeLabelPlacement.shift,
-                        interval: 1,
-                        title: AxisTitle(text: 'Time')),
-                    primaryYAxis: NumericAxis(
-                        axisLine: const AxisLine(width: 0),
-                        majorTickLines: const MajorTickLines(size: 0),
-                        title: AxisTitle(text: 'Market Price')
-                    )
-                ),
-                SfCartesianChart(
-                    title: ChartTitle(
-                        borderWidth: 2,
-                        textStyle: TextStyle(
-                          fontSize: 20,
-                        )
-                    ),
-                    series: <LineSeries<LiveData, int>>[
-                      LineSeries<LiveData, int>(
-                        onRendererCreated: (ChartSeriesController controller) {
-                          _chartSeriesController = controller;
-                        },
-                        dataSource: chartData,
-                        color: const Color.fromRGBO(192, 108, 132, 1),
-                        xValueMapper: (LiveData sales, _) => sales.time,
-                        yValueMapper: (LiveData sales, _) => sales.speed,
-                      )
-                    ],
-                    primaryXAxis: NumericAxis(
-                        majorGridLines: const MajorGridLines(width: 0),
-                        edgeLabelPlacement: EdgeLabelPlacement.shift,
-                        interval: 1,
-                        title: AxisTitle(text: 'Time')),
-                    primaryYAxis: NumericAxis(
-                        axisLine: const AxisLine(width: 0),
-                        majorTickLines: const MajorTickLines(size: 0),
-                        title: AxisTitle(text: 'Market Price')
-                    )
-                ),
-              ],
-            )
+          appBar: AppBar(
+            title: Text(widget.coin),
+          ),
+          body: Image.asset('assets/images/graph.png'),
         )
     );
   }
 
   int time = 19;
   void updateDataSource(Timer timer) {
+    var arr = [1, 20, 30, 40, 50];
     chartData.add(LiveData(time++, (math.Random().nextInt(60) + 30)));
     chartData.removeAt(0);
     _chartSeriesController.updateDataSource(
