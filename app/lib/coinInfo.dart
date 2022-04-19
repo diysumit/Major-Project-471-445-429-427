@@ -67,7 +67,15 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             title: Text(widget.coin),
           ),
-          body: Image.asset('assets/images/graph.png'),
+          body: (() {
+            if(widget.coin == 'Bitcoin'){
+              return Image.asset('assets/images/btc.png');
+              print("Inside BTC");
+            }else{
+              return Image.asset('assets/images/eth.png');
+            }
+          }())
+          ,
         )
     );
   }

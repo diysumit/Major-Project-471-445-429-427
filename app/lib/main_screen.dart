@@ -50,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     fetchCoin();
-    Timer.periodic(const Duration(seconds: 4), (timer) => fetchCoin());
+    Timer.periodic(const Duration(seconds: 10), (timer) => fetchCoin());
     super.initState();
   }
 
