@@ -40,7 +40,7 @@ def download_csv(coin: list) -> None:
     """
     url = f"https://rest.coinapi.io/v1/exchangerate/{coin[0]}/history?period_id=1HRS&time_start={start_date}T00:00:00&time_end={date_today}T00:00:00&limit=100000"
     lists = preprocess.get_lists(url, headers)
-    time_step, rate_close = preprocess.list_from_dict(lists)
+    time_step, rate_close = preprocess.list_from_dict(lists, coin)
     print(f"Writing {coin[0]}.csv file")
     preprocess.write_csv(filepath=coin[1], time_steps=time_step, rate_close=rate_close)
     
@@ -52,7 +52,7 @@ def update_csv(coin: list, last_date: str) -> None:
     """
     url = f"https://rest.coinapi.io/v1/exchangerate/{coin[0]}/history?period_id=1HRS&time_start={last_date}T00:00:00&time_end={date_today}T00:00:00&limit=100000"
     lists = preprocess.get_lists(url, headers)
-    time_steps, rate_close = preprocess.list_from_dict(lists)
+    time_steps, rate_close = preprocess.list_from_dict(lists, coin)
     print(f"Writing {coin[0]}.csv file")
     preprocess.write_csv(filepath=coin[1], time_steps=time_steps, rate_close=rate_close)
 

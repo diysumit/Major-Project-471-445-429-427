@@ -21,14 +21,17 @@ class Preprocess:
         lists = json.loads(response.text)
         return lists
 
-    def list_from_dict(self, lists: list) -> tuple:
+    def list_from_dict(self, lists: list, coin: list) -> tuple:
         """
             def list_from_dict(self, lists: list) -> tuple
 
                 returns (time_steps, rate_close)
         """
-        time_steps = ['time']
-        rate_close = ['close']
+        time_steps, rate_close = self.read_csv(coin[1])
+        if len(time_steps) == 0:
+            time_steps = ['time']
+        if len(rate_close) == 0:
+            rate_close = ['close']
         for dictionary in lists:
             date_string = dictionary.get('time_close')[:-9]
             datetimeObj = datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S")
