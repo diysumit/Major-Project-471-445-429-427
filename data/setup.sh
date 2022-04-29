@@ -18,9 +18,6 @@ else
 fi
 
 # installing python dependencies
-pip install pandas
-pip install matplotlib
-pip install requests
 pip freeze > requirements.txt
 pip install -r requirements.txt
 
