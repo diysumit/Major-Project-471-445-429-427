@@ -4,12 +4,21 @@ import pandas as pd
 import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
+import sys
+import traceback
 
 numpy.random.seed(10)
 
-dataframe = pd.read_csv('btcusd.csv', parse_dates=['time'])
-dataframe['time'] = pd.to_datetime(dataframe['time'],unit='s')
-dataframe = dataframe.set_index('time')
+coins = {'btcusd': ['BTC/USD', './unprocessed_data/btcusd.csv', './btc-weights/btc-weights.h5'], 'ethusd': ['ETH/USD', './unprocessed_data/ethusd.csv', './eth-weights/eth-weights.h5']}
+
+# getting parameters from command line
+coin = ""
+try:
+    if sys.argv[1]:
+        coin = str(sys.argv[1])
+except:
+    coin = "btcusd"
+
 
 # convert an array of values into a dataset matrix
 def create_dataset(dataset, look_back=1):
@@ -20,69 +29,82 @@ def create_dataset(dataset, look_back=1):
 		dataY.append(dataset[i + look_back])
 	return (numpy.array(dataX), numpy.array(dataY))
 
-# load the dataset
-dataset = dataframe['close']
-dataset = dataset.astype('float32')
-# dataset = dataset[-4380:]
+def main():
+    try:
+        coinList = coins[coin]
+        dataframe = pd.read_csv(coinList[1], parse_dates=['time'])
+        dataframe['time'] = pd.to_datetime(dataframe['time'],unit='s')
+        dataframe = dataframe.set_index('time')
 
-# split into training, validation and testing sets in 70, 20 and 10 percents respectively
-train_size = int(len(dataset)*0.70)
-valid_size = int(len(dataset)*0.20)
-train = dataset[:train_size]
-valid = dataset[train_size:train_size+valid_size] 
-test = dataset[train_size+valid_size:]
+        # load the dataset
+        dataset = dataframe['close']
+        dataset = dataset.astype('float32')
+        # dataset = dataset[-4380:]
 
-# reshape datasets
-look_back = 72
-trainX, trainY = create_dataset(train, look_back=look_back)
-validX, validY = create_dataset(valid, look_back=look_back)
-testX, testY = create_dataset(test, look_back=look_back)
+        # split into training, validation and testing sets in 70, 20 and 10 percents respectively
+        train_size = int(len(dataset)*0.70)
+        valid_size = int(len(dataset)*0.20)
+        train = dataset[:train_size]
+        valid = dataset[train_size:train_size+valid_size] 
+        test = dataset[train_size+valid_size:]
 
-# creating callbacks to save model
-# cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath='./eth-model/',
-#                                                  save_weights_only=True,
-#                                                  verbose=1)
-print(f'{trainX.shape} {trainY.shape}')
-# model creation and fitting
-model = tf.keras.Sequential([
-	tf.keras.layers.LSTM(24, input_shape=(look_back, 1), activation=tf.nn.relu, return_sequences=True),
-	tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(12, activation=tf.nn.relu)),
-	tf.keras.layers.Flatten(),
-	tf.keras.layers.Dense(1),
-])
+        # reshape datasets
+        look_back = 72
+        trainX, trainY = create_dataset(train, look_back=look_back)
+        validX, validY = create_dataset(valid, look_back=look_back)
+        testX, testY = create_dataset(test, look_back=look_back)
 
-model.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer=tf.keras.optimizers.Adam())
+        # creating callbacks to save model
+        # cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath='./eth-model/',
+        #                                                  save_weights_only=True,
+        #                                                  verbose=1)
+        print(f'{trainX.shape} {trainY.shape}')
+        # model creation and fitting
+        model = tf.keras.Sequential([
+	        tf.keras.layers.LSTM(24, input_shape=(look_back, 1), activation=tf.nn.relu, return_sequences=True),
+	        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(12, activation=tf.nn.relu)),
+	        tf.keras.layers.Flatten(),
+	        tf.keras.layers.Dense(1),
+        ])
 
-model.fit(trainX, trainY, epochs=15, batch_size=5, verbose=2, validation_data=(validX, validY))
+        model.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer=tf.keras.optimizers.Adam())
 
-# model.save_weights('./btc-weights/')
+        model.fit(trainX, trainY, epochs=15, batch_size=5, verbose=2, validation_data=(validX, validY))
 
-# generate predictions for training
-trainPredict = model.predict(trainX)
-validPredict = model.predict(validX)
-testPredict = model.predict(testX)
+        # model.save_weights('./btc-weights/')
 
-# shift train predictions for plotting
-trainPredictPlot = numpy.empty_like(dataset)
-trainPredictPlot[:] = numpy.nan
-trainPredictPlot[look_back:len(trainPredict)+look_back] = numpy.squeeze(trainPredict)
+        # generate predictions for training
+        trainPredict = model.predict(trainX)
+        validPredict = model.predict(validX)
+        testPredict = model.predict(testX)
 
-# shift valid predictions for plotting
-validPredictPlot = numpy.empty_like(dataset)
-validPredictPlot[:] = numpy.nan
-validPredictPlot[len(trainPredict)+look_back:len(trainPredict)+valid_size-1] = numpy.squeeze(validPredict)
+        # shift train predictions for plotting
+        trainPredictPlot = numpy.empty_like(dataset)
+        trainPredictPlot[:] = numpy.nan
+        trainPredictPlot[look_back:len(trainPredict)+look_back] = numpy.squeeze(trainPredict)
 
-# shift test predictions for plotting
-testPredictPlot = numpy.empty_like(dataset)
-testPredictPlot[:] = numpy.nan
-testPredictPlot[len(trainPredict)+valid_size+(look_back*2)+1:len(dataset)-1] = numpy.squeeze(testPredict)
+        # shift valid predictions for plotting
+        validPredictPlot = numpy.empty_like(dataset)
+        validPredictPlot[:] = numpy.nan
+        validPredictPlot[len(trainPredict)+look_back:len(trainPredict)+valid_size-1] = numpy.squeeze(validPredict)
 
-plt.plot(dataframe.index.values, dataframe['close'], 'r-', label='Real')
-plt.plot(dataframe.index.values, trainPredictPlot, color='green', label='Training Predictions')
-plt.plot(dataframe.index.values, validPredictPlot, color='blue', label='Validation Predictions')
-plt.plot(dataframe.index.values, testPredictPlot, color='orange', label='Testing Predictions')
-plt.xlabel('Date')
-plt.ylabel('Values')
-plt.title('Results')
-plt.legend()
-plt.show()
+        # shift test predictions for plotting
+        testPredictPlot = numpy.empty_like(dataset)
+        testPredictPlot[:] = numpy.nan
+        testPredictPlot[len(trainPredict)+valid_size+(look_back*2)+1:len(dataset)-1] = numpy.squeeze(testPredict)
+
+        plt.plot(dataframe.index.values, dataframe['close'], 'r-', label='Real')
+        plt.plot(dataframe.index.values, trainPredictPlot, color='green', label='Training Predictions')
+        plt.plot(dataframe.index.values, validPredictPlot, color='blue', label='Validation Predictions')
+        plt.plot(dataframe.index.values, testPredictPlot, color='orange', label='Testing Predictions')
+        plt.xlabel('Date')
+        plt.ylabel('Values')
+        plt.title('Results')
+        plt.legend()
+        plt.savefig(f'./processed_data/{coin}.png')
+        plt.show()
+    except:
+        print(traceback.print_exc())
+
+if __name__ == "__main__":
+    sys.exit(main())
