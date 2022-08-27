@@ -3,11 +3,12 @@
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.dataframe.io import read_json, read_csv
+from apache_beam.dataframe.convert import to_dataframe, to_pcollection
 
 import argparse
 import requests
 import sys
-import pandas as pd
+import modin.pandas as pd
 
 from datetime import date, timedelta
 
@@ -41,7 +42,7 @@ def create_options() -> PipelineOptions:
 
 #* get response from api and return json_obj
 #//// TODO: Implementation Required
-def get_data(coin: list) -> list:
+def get_data(coin: list) -> requests.Response.text:
     """
         def get_data(coin: list) -> None
 
@@ -62,12 +63,13 @@ def write_to_csv(data: beam.PTransform):
 #* Saves json objects locally in csv_files
 # TODO: Implementation Required
 def save_data(data):
-      with beam.Pipeline() as P:
-            (
+      P = beam.Pipeline()
+      df = (
             P
-            | read_json(data)
-            | beam.Map(write_to_csv())
+            | "Read Json Objects" >> read_json(data)
+            | "Convert PTransform to DataFrame" >> to_dataframe()
             )
+      df.to_csv(f"{input_path}raw_data")
 
 # TODO: Implementation Required
 def save_results():
@@ -76,11 +78,11 @@ def save_results():
 # TODO: Implement Pipeline logic
 def run(OPTIONS: PipelineOptions, input_path: str):
       with beam.Pipeline(options=OPTIONS) as P:
-      (
-      P 
-      | read_csv(input_path)
-      | beam.Map(save_results())
-      )
+            (
+            P 
+            | "Read CSV files" >> read_csv(input_path)
+            | "Save results" >> beam.Map(save_results())
+            )
 
 def main():
       unprocessed_data = []
