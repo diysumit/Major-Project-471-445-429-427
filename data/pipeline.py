@@ -12,6 +12,8 @@ import sys
 import json
 import pandas as pd
 
+pd.options.plotting.backend = 'plotly'
+
 from datetime import date, timedelta
 
 parser = argparse.ArgumentParser(description="")
@@ -58,41 +60,45 @@ def get_data(coin: list) -> requests.Response.text:
 #     key = '0ADD391A-E5EB-4991-9E08-ECEAA0A2958A'
     headers = {'X-CoinAPI-Key' : key}
     date_today = date.today()
-    start_date = date_today - timedelta(days=365) # 1 years of data
-    #! the api response it still skewed, need fixing
+    start_date = date_today - timedelta(days=365) #* 1 years of data
+
+    #! FIX THIS: the api response it still skewed, need fixing
     url = f"https://rest.coinapi.io/v1/exchangerate/{coin[0]}/history?period_id=1HRS&time_start={start_date}T00:00:00&time_end={date_today}T00:00:00"
     response = requests.get(url=url, headers=headers)
     return response.text
 
 #* Saves json objects locally in csv_files
 #//// TODO: Implementation Required
-def save_data(data, filename):
+def save_data(data, filename) -> None:
       data = pd.DataFrame.from_dict([json.loads(data)])
       data.to_csv(f"{input_path}{filename}")
 
 # TODO: Implementation Required
-def save_results():
-      pass
+def save_results(df: pd.DataFrame) -> None:
+      print(df)
+      plot = df.plot()
+      fig = plot.get_figure()
+      fig.savefig(f"{output_path}result.png")
 
 # TODO: Implement Pipeline logic
-def run(OPTIONS: PipelineOptions, input_path: str):
+def run(OPTIONS: PipelineOptions, filename: str) -> None:
+      
       with beam.Pipeline(options=OPTIONS) as P:
-            (
-            P 
-            | "Read CSV files" >> read_csv(input_path)
-            | "Convert to dataframe" >> to_dataframe()
-            | "Save results" >> beam.Map(save_results())
-            )
 
-def main():
+            csv_file = P | "Read CSV files" >> read_csv(input_path+filename)
+            df = to_dataframe(pcoll=csv_file)
+            (df | "Save results" >> beam.Map(save_results()))               
+
+def main() -> None:
       try:
             unprocessed_data = []
             for coin in coins:
                   unprocessed_data.append(get_data(coin))
             OPTIONS = create_options()
             for json_obj, coin in zip(unprocessed_data, coins):
-                  save_data(data=json_obj, filename=coins.get(coin)[1])
-            run(OPTIONS=OPTIONS, input_path=input_path)
+                  filename = coins.get(coin)[1]
+                  save_data(data=json_obj, filename=filename)
+                  run(OPTIONS=OPTIONS, filename=filename)
      
       except Exception as e:
             traceback.print_exc(e)
