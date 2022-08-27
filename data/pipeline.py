@@ -48,7 +48,7 @@ def get_data(coin: list) -> requests.Response.text:
 
             returns json_obj
     """
-    key = '0ADD391A-E5EB-4991-9E08-ECEAA0A2958A'
+    key = 'FAA10B2B-C744-43C1-90BC-D1D0A0007E4C'
     headers = {'X-CoinAPI-Key' : key}
     date_today = date.today()
     start_date = date_today - timedelta(days=365) # 7 years of data
@@ -62,14 +62,14 @@ def write_to_csv(data: beam.PTransform):
 
 #* Saves json objects locally in csv_files
 # TODO: Implementation Required
-def save_data(data):
+def save_data(data, path):
       P = beam.Pipeline()
       df = (
             P
             | "Read Json Objects" >> read_json(data)
-            | "Convert PTransform to DataFrame" >> to_dataframe()
+            | "Convert PTransform to DataFrame" >> to_dataframe() #! doesn't work api response is skewed
             )
-      df.to_csv(f"{input_path}raw_data")
+      df.to_csv(path)
 
 # TODO: Implementation Required
 def save_results():
@@ -89,8 +89,8 @@ def main():
       for coin in coins:
             unprocessed_data.append(get_data(coin))
       OPTIONS = create_options()
-      for json_obj in unprocessed_data:
-            save_data(data=json_obj)
+      for json_obj, coin in zip(unprocessed_data, coins):
+            save_data(data=json_obj, path=coin[1])
       run(OPTIONS=OPTIONS, input_path=input_path)
 
 if __name__ == "__main__":
