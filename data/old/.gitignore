@@ -1,0 +1,7 @@
+*.zip
+__pycache__/
+all_currencies/
+processed_data/
+unprocessed_data/
+.kaggle/
+temp/
